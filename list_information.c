@@ -1,3 +1,10 @@
+/**
+ * list_information.c
+ * Program that lists superblock and directory information for a QFS file system
+ * CSC520 - Operating Systems
+ * 12/6/2025
+ */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -18,7 +25,43 @@ int main(int argc, char *argv[]) {
     printf("Opened disk image: %s\n", argv[1]);
 #endif
 
-    //TODO
+    // Read superblock
+    superblock_t superblock;
+    fread(&superblock, sizeof(superblock_t), 1, fp);
+
+    // Ensure file system type is QFS
+    if (superblock.fs_type != 0x51) {
+        fprintf(stderr, "Invalid file system type.");
+        fclose(fp);
+        return 3;
+    }
+
+    // Output superblock info
+    printf("Superblock Information\n");
+    printf("Block Size: %u bytes\n", superblock.bytes_per_block);
+    printf("Total Blocks: %u\n", superblock.total_blocks);
+    printf("Free Blocks: %u\n", superblock.available_blocks);
+    printf("Total Directory Entries: %u\n", superblock.total_direntries);
+    printf("Free Directory Entries: %u\n\n", superblock.available_direntries);
+
+    // Move pointer to start
+    fseek(fp, sizeof(superblock_t), SEEK_SET);
+
+    // Print directory information
+    direntry_t direntry;
+    int total_files = 0;
+    printf("Directory Entries\n");
+    for (int i = 0; i < superblock.total_direntries; i++) {
+        fread(&direntry, sizeof(direntry_t), 1, fp);
+        if (direntry.filename[0] != '\0') {
+            total_files++;
+            printf("%s\n", direntry.filename);
+            printf("%u\n", direntry.file_size);
+            printf("%u\n", direntry.permissions);
+            printf("%u\n\n", direntry.starting_block);
+        }
+    }
+    if (total_files == 0) printf("No files found\n");
 
     fclose(fp);
     return 0;
