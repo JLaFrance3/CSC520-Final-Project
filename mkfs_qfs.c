@@ -1,5 +1,8 @@
 /*
-**Program to make a filesystem on a blank file using the qfs parameters
+** Program to make a filesystem on a blank file using the qfs parameters
+** CSC520 - Operating Systems
+** Updated by: Jean LaFrance
+** 12/10/2025
 **
 ** Usage: mkfs_qfs <disk image file> [<label>]
 **
@@ -92,10 +95,22 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "File size: %ld bytes\n", file_size);
 #endif
 
-    // Calculate block size and counts (TODO: adjust these calculations as needed)
+    // Calculate block size and counts
     int total_data_available = (file_size - sizeof(superblock_t) - (sizeof(direntry_t) * 255));
-    sb.bytes_per_block = 512;
-
+    
+    // Block sizes for 30MB, 60MB, and 120MB
+    if (total_data_available <= 31457280) {
+        sb.bytes_per_block = 512;
+    } else if (total_data_available <= 62914560) {
+        sb.bytes_per_block = 1024;
+    } else if (total_data_available <= 125829120) {
+        sb.bytes_per_block = 2048;
+    } else {
+        fprintf(stderr, "Error: Disk image too large. Max size 120MB.\n");
+        fclose(fp);
+        return 1;
+    }
+    
 #ifdef DEBUG
     fprintf(stderr, "Total data available: %d\n", total_data_available);
     fprintf(stderr, "Block size: %d\n", sb.bytes_per_block);
