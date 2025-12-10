@@ -2,6 +2,7 @@
  * list_information.c
  * Program that lists superblock and directory information for a QFS file system
  * CSC520 - Operating Systems
+ * Jean LaFrance
  * 12/6/2025
  */
 
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
 
     // Ensure file system type is QFS
     if (superblock.fs_type != 0x51) {
-        fprintf(stderr, "Invalid file system type.");
+        fprintf(stderr, "Invalid file system type.\n");
         fclose(fp);
         return 3;
     }
