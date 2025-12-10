@@ -225,6 +225,8 @@ int main(int argc, char *argv[]) {
     memset(&new_entry, 0, sizeof(new_entry));
     strncpy(new_entry.filename, argv[2], sizeof(new_entry.filename) - 1);
     new_entry.permissions = 0x00;
+    if (is_jpg) new_entry.permissions |= 0x40;      //Set file type to 1
+    else if (is_png) new_entry.permissions |= 0x80; //Set file type to 2
     new_entry.owner_id = 0x00;
     new_entry.group_id = 0x00;
     new_entry.starting_block = blocks[0];

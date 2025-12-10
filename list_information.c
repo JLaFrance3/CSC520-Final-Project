@@ -53,12 +53,28 @@ int main(int argc, char *argv[]) {
     int total_files = 0;
     printf("Directory Entries\n");
     for (int i = 0; i < superblock.total_direntries; i++) {
-        fread(&direntry, sizeof(direntry_t), 1, fp);
+        if (fread(&direntry, sizeof(direntry_t), 1, fp) != 1) {
+            fprintf(stderr, "Error: Could not read directory entry %d.\n", i);
+            break;
+        }
+
         if (direntry.filename[0] != '\0') {
             total_files++;
-            printf("%s\n", direntry.filename);
+
+            // Bits 6:7 of permissions are file type
+            int file_type = (direntry.permissions >> 6) & 0x03;
+            char type_name[5] = "";
+            if (file_type == 1) {
+                strcpy(type_name, "JPG");
+            } else if (file_type == 2) {
+                strcpy(type_name, "PNG");
+            } else {
+                strcpy(type_name, "None");
+            }
+
+            printf(">%s\n", direntry.filename);
             printf("File Size: %u bytes\n", direntry.file_size);
-            printf("Permissions: %u\n", direntry.permissions);
+            printf("File Type: %s\n", type_name);
             printf("Starting Block: %u\n", direntry.starting_block);
         }
     }
