@@ -1,5 +1,9 @@
 /*
-* Author: Horacio Valdes
+ * write_file.c
+ * Program that writes a file in the working directory to the disk image
+ * CSC520 - Operating Systems
+ * Author: Horacio Valdes
+ * 12/10/25
 */
 #include <stdio.h>
 #include <stdlib.h>

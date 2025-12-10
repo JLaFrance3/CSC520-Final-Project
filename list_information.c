@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
         if (direntry.filename[0] != '\0') {
             total_files++;
             printf("%s\n", direntry.filename);
-            printf("%u\n", direntry.file_size);
-            printf("%u\n", direntry.permissions);
-            printf("%u\n\n", direntry.starting_block);
+            printf("File Size: %u bytes\n", direntry.file_size);
+            printf("Permissions: %u\n", direntry.permissions);
+            printf("Starting Block: %u\n", direntry.starting_block);
         }
     }
     if (total_files == 0) printf("No files found\n");

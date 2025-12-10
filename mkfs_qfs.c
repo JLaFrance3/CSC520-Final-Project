@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
         sb.bytes_per_block = 2048;
     } else {
         fprintf(stderr, "Error: Disk image too large. Max size 120MB.\n");
-        flcose(fp);
+        fclose(fp);
         return 1;
     }
     
