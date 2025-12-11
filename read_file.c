@@ -66,98 +66,31 @@ int main(int argc, char *argv[]) {
 	
 	//create output file
 	FILE *output = fopen(argv[3], "wb");
-	
-	//calculate how many blocks the file covers
-	int numBlocksCovered = currentEntry.file_size/(blockSize-3) +
-				(currentEntry.file_size % (blockSize-3) == 0) ? 0 : 1;
-	//int offset = currentEntry.file_size % (blockSize-3);
 
 	//go to the start block, skipping the is_busy byte
 	fseek(fp, 32 + (255 * 32) + (blockStart * blockSize) + 1, SEEK_SET);
 	int totalBytes = 0;
 	while (totalBytes < currentEntry.file_size)
 	{
-		// Read 1 byte
+		//read 1 byte
 		uint8_t buffer;
 		fread(&buffer, sizeof(buffer), 1, fp);
-		// Write 1 byte
+		
+		//write 1 byte
 		fwrite(&buffer, sizeof(buffer), 1, output);
 		totalBytes++;
-		// If totalBytes a multiple 0f blocksize-3
-		if(totalBytes % (blockSize - 3) == 0)
+		
+		//check if all data in the block has been read and an advancement to a new block is needed
+		if((totalBytes < currentEntry.file_size) && (totalBytes % (blockSize - 3) == 0))
 		{
-			// Read 2 byte address
+			//read 2 byte next block address
 			uint16_t address;
 			fread(&address, sizeof(address), 1, fp);
 			
-			if(totalBytes < currentEntry.file_size)
-			{
-				// If more bytes to read, seek to address+1
-				fseek(fp, 32 + (255 * 32) + (address * blockSize) + 1, SEEK_SET);
-			}
+			//seek to the next block address
+			fseek(fp, 32 + (255 * 32) + (address * blockSize) + 1, SEEK_SET);
 		}
 	}
-
-	/*
-		//set up buffer for file data
-		uint8_t buffer[blockSize - 3];
-		fread(buffer, sizeof(buffer), 1, fp);
-		
-		//write the data from the buffer to output
-		fwrite(buffer, sizeof(buffer), 1, output);
-		
-		//get the current fileblock to find the next block the file is occupying
-		fileblock_t currBlock;
-		fseek(fp, -blockSize, SEEK_CUR);
-		fread(&currBlock, blockSize, 1, fp);
-		uint16_t nextBlock = currBlock.next_block;
-		
-		//go to the next file block
-		fseek(fp, 32 + 255 * 32 + nextBlock * blockSize + 1, SEEK_SET); 
-		totalBytes += (blockSize - 3);
-	}
-
-	if(numBlocksCovered == 1)
-	{
-		//set up buffer for file data
-		uint8_t buffer[blockSize - 3];
-		fread(buffer, sizeof(buffer), 1, fp);
-		
-		//write the data from the buffer to output
-		fwrite(buffer, sizeof(buffer), 1, output);
-	}
-	else 
-	{
-		for(int i=1; i<numBlocksCovered; i++)
-		{
-			if(i != numBlocksCovered)
-			{
-				//set up buffer for file data
-				uint8_t buffer[blockSize - 3];
-				fread(buffer, sizeof(buffer), 1, fp);
-				
-				//write the data from the buffer to output
-				fwrite(buffer, sizeof(buffer), 1, output);
-				
-				//get the current fileblock to find the next block the file is occupying
-				fileblock_t currBlock;
-				fseek(fp, -blockSize, SEEK_CUR);
-				fread(&currBlock, blockSize, 1, fp);
-				uint16_t nextBlock = currBlock.next_block;
-				
-				//go to the next file block
-				fseek(fp, 32 + 255 * 32 + nextBlock * blockSize + 1, SEEK_SET); 
-			}
-			else 
-			{
-				//read and write the remainder of the data in the last block covered by the file
-				uint8_t buffer[offset];
-				fread(buffer, sizeof(buffer), 1, fp);
-				fwrite(buffer, sizeof(buffer), 1, output);
-			}
-		}
-	}
-	*/
 	
 	//flush written file for safety
 	fflush(output);
