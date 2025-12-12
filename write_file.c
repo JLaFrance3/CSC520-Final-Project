@@ -2,6 +2,7 @@
  * write_file.c
  * Program that writes a file in the working directory to the disk image
  * CSC520 - Operating Systems
+ * Group: Aleena Graveline, Jean LaFrance, Horacio Valdes, Matthew Glennon
  * Author: Horacio Valdes
  * 12/10/25
 */

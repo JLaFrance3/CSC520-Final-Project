@@ -1,6 +1,7 @@
 /*
 ** Program to make a filesystem on a blank file using the qfs parameters
 ** CSC520 - Operating Systems
+** Group: Aleena Graveline, Jean LaFrance, Horacio Valdes, Matthew Glennon
 ** Updated by: Jean LaFrance
 ** 12/10/2025
 **

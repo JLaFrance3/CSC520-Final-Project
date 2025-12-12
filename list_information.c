@@ -2,7 +2,8 @@
  * list_information.c
  * Program that lists superblock and directory information for a QFS file system
  * CSC520 - Operating Systems
- * Jean LaFrance
+ * Group: Aleena Graveline, Jean LaFrance, Horacio Valdes, Matthew Glennon
+ * Updated by: Jean LaFrance
  * 12/6/2025
  */
 
