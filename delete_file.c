@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 
             //overwrite the directory entry with 0's to mark as empty
             fseek(fp,32 + (32*i), SEEK_SET);
-            fwrite(buffer, 1, sizeof(uint8_t) * 32, fp);
+            fwrite(&buffer, 1, sizeof(uint8_t) * 32, fp);
 
             //empty original directory entry :D
 			break;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < blocksToDelete; i++){
         //open block
         fseek(fp,blockStartIndex + (nextBlock* blockSize), SEEK_SET);
-        fwrite(openByte, 1, sizeof(uint8_t), fp);
+        fwrite(&openByte, 1, sizeof(uint8_t), fp);
 
         //read in the next block
         fseek(fp, blockStartIndex + (((nextBlock + 1) * blockSize)) - 2, SEEK_SET);
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     sb.available_blocks += blocksToDelete;
     sb.available_direntries += 1;
     fseek(fp, 0, SEEK_SET);
-    fwrite(sb, 1, sizeof(superblock_t), fp);
+    fwrite(&sb, 1, sizeof(superblock_t), fp);
 
     
     //flush file for safety
